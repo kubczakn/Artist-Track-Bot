@@ -5,10 +5,10 @@ import spotipy.util as util
 
 # Adds tracks to a playlist
 
-if len(sys.argv) < 3:
+if len(sys.argv) > 3:
     username = sys.argv[1]
     playlist_id = sys.argv[2]
-    track_ids = sys.argv[3]
+    track_ids = sys.argv[3:]
 else:
     print("Usage: %s username playlist_id track_id ..." % (sys.argv[0],))
     sys.exit()
@@ -20,6 +20,7 @@ token = util.prompt_for_user_token(username,
                                    client_id=os.environ.get('SPOTIPY_CLIENT_ID'),
                                    client_secret=os.environ.get('SPOTIPY_CLIENT_SECRET'),
                                    redirect_uri=os.environ.get('SPOTIPY_REDIRECT_URL'))
+
 
 if token:
     sp = spotipy.Spotify(auth=token)
