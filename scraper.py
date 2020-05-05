@@ -1,6 +1,5 @@
 import sys
 import os
-import json
 import spotipy
 import spotipy.util as util
 
@@ -28,31 +27,50 @@ token = util.prompt_for_user_token(username=username,
                                    redirect_uri=os.environ.get('SPOTIPY_REDIRECT_URL'))
 
 
-# functions stubs
-def add_songs_to_playlist():
-    print('')
+def create_playlist_dict(d):
+    for key in d.keys():
+        print(key)
+    choose_playlist = input('Choose a playlist: ')
+    choose_playlist_id = d[choose_playlist]
+    return sp.playlist_tracks(choose_playlist_id, offset=0, fields='items.track.id,total')
 
 
-def search_playlist_for_track():
-    print('')
+def create_artist_dict(playlist):
+    artists = {}
+    for i in range(0, playlist['total']):
+        artist_id = playlist['items'][i]['track']['id']
+        artist_name = sp.track(artist_id)['album']['artists'][0]['name']
+        artists[artist_name] = artist_id
+    return artists
+
+
+def print_artists(artists):
+    for key in artists.keys():
+        print(key)
 
 
 if token:
     sp = spotipy.Spotify(auth=token)
     sp.trace = False
+
+    # Create a new playlist
     #    created_playlist = sp.user_playlist_create(username, playlist_name, description=playlist_description)
     playlists = sp.current_user_playlists(limit=50)
+    print(type(playlists))
+    # Create a dict of playlists names with their respective ids
     playlist_dict = {}
     for i, item in enumerate(playlists['items']):
         playlist_dict[item['name']] = item['id']
-    playlist_tracks = []
-    first_playlist = list(playlist_dict.keys())[0]
-    print(first_playlist)
-    first_playlist_tracks = sp.playlist_tracks(playlist_dict[first_playlist], offset=0, fields='items.track.id,total')
-    print(first_playlist_tracks)
-    # work on show_tracks.py, which will show artist and track name, given a list of track IDs
 
-#    for track in first_playlist_tracks:
+    # Print names of all playlist and have user choose a playlist
+    chosen_playlist = create_playlist_dict(playlist_dict)
 
+    # Go through chosen playlist and create a dict of track names with their respective ids
+    artist_dict = create_artist_dict(chosen_playlist)
+
+    # Print all artist names and have user choose an artist
+    print_artists(artist_dict)
+    chosen_artist = input('Choose an artist: ')
+    print(chosen_artist)
 else:
     print("Can't get token for", username)
