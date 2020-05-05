@@ -37,8 +37,8 @@ def create_playlist_dict(d):
 
 def create_artist_dict(playlist):
     artists = {}
-    for i in range(0, playlist['total']):
-        artist_id = playlist['items'][i]['track']['id']
+    for num in range(0, playlist['total']):
+        artist_id = playlist['items'][num]['track']['id']
         artist_name = sp.track(artist_id)['album']['artists'][0]['name']
         artists[artist_name] = artist_id
     return artists
@@ -56,7 +56,6 @@ if token:
     # Create a new playlist
     #    created_playlist = sp.user_playlist_create(username, playlist_name, description=playlist_description)
     playlists = sp.current_user_playlists(limit=50)
-    print(type(playlists))
     # Create a dict of playlists names with their respective ids
     playlist_dict = {}
     for i, item in enumerate(playlists['items']):
@@ -64,13 +63,16 @@ if token:
 
     # Print names of all playlist and have user choose a playlist
     chosen_playlist = create_playlist_dict(playlist_dict)
-
     # Go through chosen playlist and create a dict of track names with their respective ids
     artist_dict = create_artist_dict(chosen_playlist)
 
     # Print all artist names and have user choose an artist
     print_artists(artist_dict)
     chosen_artist = input('Choose an artist: ')
-    print(chosen_artist)
+    print(sp.track(artist_dict[chosen_artist]))
+    artist_data = sp.track(artist_dict[chosen_artist])
+    chosen_artist_uri = 'spotify:artist:' + artist_data['album']['artists'][0]['id']
+    print(chosen_artist_uri)
+    print(sp.artist(chosen_artist_uri))
 else:
     print("Can't get token for", username)
