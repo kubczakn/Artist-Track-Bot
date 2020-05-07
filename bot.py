@@ -5,11 +5,8 @@ import spotipy.util as util
 
 # Create a new playlist of songs from a specified artist, given another playlist
 
-if len(sys.argv) > 3:
+if len(sys.argv) > 1:
     username = sys.argv[1]
-    user = sys.argv[2]
-    playlist_id = sys.argv[3]
-    track_ids = sys.argv[4:]
 else:
     print("Usage: %s username playlist_id track_id ..." % (sys.argv[0],))
     sys.exit()
