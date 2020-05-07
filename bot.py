@@ -106,22 +106,29 @@ def add_artist_songs(new_plst_uri, art_name, art_lst, obj):
 
 def main():
     if token:
-        sp = spotipy.Spotify(auth=token)
-        sp.trace = False
-        initial_input = input("Type 1 to create a new playlist, 2 to modify an existing playlist: ")
-        while initial_input != '1' and initial_input != '2':
-            initial_input = input('Invalid input, please try again ')
-        if initial_input == '1':
-            plst_name = input("Please name this new playlist:  ")
-            create_new_playlist(sp, plst_name)
-            playlist_dict = create_playlist_dict(sp)
-        else:
-            playlist_dict = create_playlist_dict(sp)
-            plst_name = choose_playlist_to_modify(playlist_dict)
-        chosen_playlist = choose_playlist(playlist_dict, sp)
-        artist_list = create_artist_list(chosen_playlist, sp)
-        chosen_artist = choose_artist(artist_list)
-        add_artist_songs(playlist_dict[plst_name], chosen_artist, artist_list, sp)
+        loop = True
+        while loop:
+            sp = spotipy.Spotify(auth=token)
+            sp.trace = False
+            initial_input = input("Type 1 to create a new playlist, 2 to modify an existing playlist: ")
+            while initial_input != '1' and initial_input != '2':
+                initial_input = input('Invalid input, please try again: ')
+            if initial_input == '1':
+                plst_name = input("Please name this new playlist:  ")
+                create_new_playlist(sp, plst_name)
+                playlist_dict = create_playlist_dict(sp)
+            else:
+                playlist_dict = create_playlist_dict(sp)
+                plst_name = choose_playlist_to_modify(playlist_dict)
+            chosen_playlist = choose_playlist(playlist_dict, sp)
+            artist_list = create_artist_list(chosen_playlist, sp)
+            chosen_artist = choose_artist(artist_list)
+            add_artist_songs(playlist_dict[plst_name], chosen_artist, artist_list, sp)
+            end_input = input('Continue modifying? Please input Y/N: ')
+            while end_input != 'Y' and end_input != 'N':
+                end_input = input('Invalid input, please try again: ')
+            if end_input == 'N':
+                loop = False
 
     else:
         print("Can't get token for", username)
